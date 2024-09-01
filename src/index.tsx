@@ -21,24 +21,7 @@ const fontData = readFileSync(fontPath);
 app.frame('/', (c) => {
   return c.res({
     action: '/stats',
-    image: (
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: 'url("roundcaster_bg.jpg") center center no-repeat',
-          backgroundSize: "cover",
-          width: '100%',
-          height: '100%',
-          padding: '20px'
-        }}
-      >
-        <h1 style={{ color: '#FFD700', fontSize: '48px', marginBottom: '20px' }}>Roundcaster</h1>
-        <p style={{ color: '#FFFFFF', fontSize: '24px' }}>Discover Your Farcaster Earnings</p>
-      </div>
-    ),
+    image: 'https://res.cloudinary.com/dbuaprzc0/image/upload/f_auto,q_auto/bl6vq4pvhmzsa8jjjrbd',
     intents: [
       <TextInput placeholder="Enter Farcaster ID" />,
       <Button value="search">Reveal Stats</Button>
@@ -75,7 +58,7 @@ app.frame('/stats', async (c) => {
           fontFamily: 'Roboto'
         }}
       >
-        <h1 style={{ color: '#FFD700', fontSize: '28px', marginBottom: '12px' }}>
+        <h1 style={{ color: '#FFD700', fontSize: '28px', marginTop: '40px', marginBottom: '12px' }}>
           Farcaster ID: {farcasterId}
         </h1>
         <div
