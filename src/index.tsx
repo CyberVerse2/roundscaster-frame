@@ -2,9 +2,6 @@ import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { Button, Frog, TextInput } from 'frog';
 import { devtools } from 'frog/dev';
-import { readFileSync } from 'fs';
-import { join } from 'path';
-import satori from 'satori';
 // import { neynar } from 'frog/hubs'
 
 export const app = new Frog({
@@ -14,9 +11,6 @@ export const app = new Frog({
 });
 
 app.use('/*', serveStatic({ root: './public' }));
-
-const fontPath = join(process.cwd(), 'Roboto-Regular.ttf');
-const fontData = readFileSync(fontPath);
 
 app.frame('/', (c) => {
   return c.res({
@@ -35,161 +29,131 @@ app.frame('/stats', async (c) => {
 
   try {
     const response = await fetch(
-      `https://exuberant-blood.pipeops.app/api/v1/rounds/user?userId=${farcasterId}`
+      `https://rounds-checker.adaptable.app/api/v1/rounds/user?userId=${farcasterId}`
     );
     const data = await response.json();
-    console.log(data);
 
     const totalEarnings = data.totalEarnings.reduce(
-      (acc: string, earning: { denomination: any; amount: number }) => {
-        return acc + `${earning.denomination}: ${earning.amount.toFixed(2)}\n`;
-      },
+      (acc, earning) => acc + `${earning.denomination}: ${earning.amount.toFixed(2)}\n`,
       ''
     );
 
-    const svg = await satori(
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          backgroundColor: '#0a1528',
-          width: '100%',
-          padding: '20px',
-          fontFamily: 'Roboto'
-        }}
-      >
-        <h1 style={{ color: '#FFD700', fontSize: '28px', marginTop: '40px', marginBottom: '12px' }}>
-          Farcaster ID: {farcasterId}
-        </h1>
-        <div
-          style={{
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-around',
-            gap: '12px',
-            marginBottom: '12px',
-            position: 'relative'
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              backgroundColor: 'hsl(222.2 84% 4.9%)',
-              paddingLeft: '8px',
-              borderRadius: '10px',
-              width: '45%',
-              height: 'auto'
-            }}
-          >
-            <h2 style={{ color: '#4CAF50', fontSize: '20px', marginBottom: '-8px' }}>
-              Rounds Participated
-            </h2>
-            <p
-              style={{
-                color: '#FFFFFF',
-                fontSize: '36px',
-                textAlign: 'center'
-              }}
-            >
-              {data.roundsParticipated.length}
-            </p>
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              backgroundColor: 'hsl(222.2 84% 4.9%)',
-              paddingLeft: '16px',
-              borderRadius: '10px',
-              width: '50%',
-              height: 'auto'
-            }}
-          >
-            <h2 style={{ color: '#2196F3', fontSize: '20px', marginBottom: '-8px' }}>
-              Total Earnings
-            </h2>
-            <pre
-              style={{
-                color: '#FFFFFF',
-                fontSize: '16px',
-                display: 'block',
-                whiteSpace: 'pre-wrap'
-              }}
-            >
-              {totalEarnings}
-            </pre>
-          </div>
-        </div>
-
-        <div
-          style={{
-            width: '100%',
-            height: '120px',
-            display: 'flex',
-            flexDirection: 'column',
-            backgroundColor: 'hsl(222.2 84% 4.9%)',
-            paddingLeft: '16px',
-            borderRadius: '10px',
-            marginBottom: '8px',
-            position: 'relative'
-          }}
-        >
-          <h2
-            style={{
-              color: '#FFA500',
-              fontSize: '20px',
-              lineHeight: '1',
-              marginBottom: '-2px'
-            }}
-          >
-            Recent Winnings
-          </h2>
-          <div
-            style={{
-              width: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              marginTop: '-8px'
-            }}
-          >
-            {data.winnings
-              .slice(0, 2)
-              .map(
-                (
-                  winning: { round: { name: any; denomination: any }; amount: number },
-                  index: any
-                ) => (
-                  <p
-                    key={index}
-                    style={{ color: '#FFFFFF', fontSize: '14px', marginBottom: '-5px' }}
-                  >
-                    {winning.round.name}: {winning.amount.toFixed(4)} {winning.round.denomination}
-                  </p>
-                )
-              )}
-          </div>
-        </div>
-      </div>,
-      {
-        width: 600,
-        height: 400,
-        fonts: [
-          {
-            name: 'Roboto',
-            data: fontData,
-            weight: 400,
-            style: 'normal'
-          }
-        ]
-      }
-    );
-
-    const dataUrl = `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`;
+    const recentWinnings = data.winnings.slice(0, 2);
 
     return c.res({
-      image: dataUrl,
+      image: (
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            backgroundColor: '#0a1528',
+            width: '100%',
+            height: '100%',
+            padding: '20px',
+            fontFamily: 'Arial, sans-serif',
+            color: 'white'
+          }}
+        >
+          <h1
+            style={{
+              color: '#FFD700',
+              fontSize: '24px',
+              marginBottom: '20px',
+              textAlign: 'center'
+            }}
+          >
+            Farcaster ID: {farcasterId}
+          </h1>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              marginBottom: '20px'
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: 'rgba(0,0,0,0.3)',
+                borderRadius: '10px',
+                padding: '15px',
+                width: '48%'
+              }}
+            >
+              <h2
+                style={{
+                  color: '#4CAF50',
+                  fontSize: '18px',
+                  marginBottom: '10px'
+                }}
+              >
+                Rounds Participated
+              </h2>
+              <p
+                style={{
+                  fontSize: '28px',
+                  textAlign: 'center'
+                }}
+              >
+                {data.roundsParticipated.length}
+              </p>
+            </div>
+            <div
+              style={{
+                backgroundColor: 'rgba(0,0,0,0.3)',
+                borderRadius: '10px',
+                padding: '15px',
+                width: '48%'
+              }}
+            >
+              <h2
+                style={{
+                  color: '#2196F3',
+                  fontSize: '18px',
+                  marginBottom: '10px'
+                }}
+              >
+                Total Earnings
+              </h2>
+              <pre
+                style={{
+                  fontSize: '14px',
+                  whiteSpace: 'pre-wrap'
+                }}
+              >
+                {totalEarnings}
+              </pre>
+            </div>
+          </div>
+          <div
+            style={{
+              backgroundColor: 'rgba(0,0,0,0.3)',
+              borderRadius: '10px',
+              padding: '15px'
+            }}
+          >
+            <h2
+              style={{
+                color: '#FFA500',
+                fontSize: '18px',
+                marginBottom: '10px'
+              }}
+            >
+              Recent Winnings
+            </h2>
+            {recentWinnings.map((winning, index) => (
+              <p
+                key={index}
+                style={{
+                  fontSize: '14px',
+                  marginBottom: '5px'
+                }}
+              >
+                {winning.round.name}: {winning.amount.toFixed(4)} {winning.round.denomination}
+              </p>
+            ))}
+          </div>
+        </div>
+      ),
       intents: [
         <Button value="back" action="/">
           New Search
@@ -209,11 +173,26 @@ app.frame('/stats', async (c) => {
             backgroundColor: '#1E1E1E',
             width: '100%',
             height: '100%',
-            padding: '20px'
+            padding: '20px',
+            color: 'white'
           }}
         >
-          <h1 style={{ color: '#FF6347', fontSize: '28px', marginBottom: '20px' }}>Oops!</h1>
-          <p style={{ color: '#FFFFFF', fontSize: '20px' }}>Couldn't fetch user data. Try again?</p>
+          <h1
+            style={{
+              color: '#FF6347',
+              fontSize: '24px',
+              marginBottom: '20px'
+            }}
+          >
+            Oops!
+          </h1>
+          <p
+            style={{
+              fontSize: '18px'
+            }}
+          >
+            Couldn't fetch user data. Try again?
+          </p>
         </div>
       ),
       intents: [

@@ -4,14 +4,15 @@
   "type": "module",
   "scripts": {
     "dev": "frog dev",
-    "start": "tsx src/index.tsx"
+    "start": "tsx src/index.tsx",
+    "deploy": "vercel"
   },
   "dependencies": {
     "@hono/node-server": "^1",
     "frog": "latest",
     "hono": "^4",
-    "satori": "^0.10.14",
-    "tsx": "^3.12.2"
+    "tsx": "^3.12.2",
+    "vercel": "^37.4.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.17"
